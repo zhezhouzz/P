@@ -44,7 +44,7 @@ namespace Plang.Options
             basicGroup.AddArgument("outdir", "o", "Dump output to directory (absolute or relative path)");
             basicGroup.AddArgument("verbose", "v", "Enable verbose log output during exploration", typeof(bool));
             basicGroup.AddArgument("debug", "d", "Enable debugging", typeof(bool)).IsHidden = true;
-            basicGroup.AddArgument("ptest", "pt", "Output Assertion logs for PTest", typeof(bool)).IsHidden = true;
+            basicGroup.AddArgument("ptest", "pt", "Output Assertion logs for PTest", typeof(bool));
 
             var exploreGroup = Parser.GetOrCreateGroup("explore", "Systematic exploration options");
             exploreGroup.AddArgument("iterations", "i", "Number of schedules to explore", typeof(uint)).IsHidden = true;
