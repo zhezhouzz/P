@@ -187,6 +187,9 @@ namespace PChecker
         [DataMember]
         public bool IsVerbose { get; set; }
 
+        [DataMember]
+        public bool PTestMode { get; set; }
+
         /// <summary>
         /// Enables code coverage reporting of a Coyote program.
         /// </summary>
@@ -328,6 +331,7 @@ namespace PChecker
 
             IsVerbose = false;
             EnableDebugging = false;
+            PTestMode = false;
 
             EnableColoredConsoleOutput = false;
             DisableEnvironmentExit = true;

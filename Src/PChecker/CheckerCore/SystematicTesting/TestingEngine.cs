@@ -90,6 +90,8 @@ namespace PChecker.SystematicTesting
         /// </summary>
         private readonly List<List<LogEntry>> JsonVerboseLogs;
 
+        private readonly List<List<LogEntry>> PTestAssertionLogs;
+
         /// <summary>
         /// Field declaration with default JSON serializer options
         /// </summary>
@@ -280,6 +282,11 @@ namespace PChecker.SystematicTesting
             if (checkerConfiguration.IsVerbose)
             {
                 JsonVerboseLogs = new List<List<LogEntry>>();
+            }
+
+            if (checkerConfiguration.PTestMode)
+            {
+                PTestAssertionLogs = [];
             }
 
             if (checkerConfiguration.SchedulingStrategy is "replay")
@@ -497,6 +504,20 @@ namespace PChecker.SystematicTesting
                     JsonSerializer.Serialize(jsonStreamFile, JsonVerboseLogs, jsonSerializerConfig);
                 }
 
+                if (_checkerConfiguration.PTestMode)
+                {
+                    var directory = _checkerConfiguration.OutputDirectory;
+                    var file = Path.GetFileNameWithoutExtension(_checkerConfiguration.AssemblyToBeAnalyzed);
+                    file += "_" + _checkerConfiguration.TestingProcessId;
+                    var pTestPath = directory + file + "_pTest.trace.json";
+
+                    Logger.WriteLine("... Emitting pTest logs:");
+                    Logger.WriteLine($"..... Writing {pTestPath}");
+
+                    using var pTestStreamFile = File.Create(pTestPath);
+                    JsonSerializer.Serialize(pTestStreamFile, PTestAssertionLogs, jsonSerializerConfig);
+                }
+
             }, CancellationTokenSource.Token);
         }
 
@@ -579,6 +600,13 @@ namespace PChecker.SystematicTesting
                 if (_checkerConfiguration.IsVerbose)
                 {
                     JsonVerboseLogs.Add(JsonLogger.Logs);
+                }
+
+                if (_checkerConfiguration.PTestMode)
+                {
+                    PTestAssertionLogs.Add(JsonLogger.Logs.Where(
+                        e => e.Type == JsonWriter.LogType.AssertionFailure.ToString()
+                    ).ToList());
                 }
 
                 runtime.LogWriter.LogCompletion();
