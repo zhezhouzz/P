@@ -6,12 +6,15 @@ machine TestDriver
   start state Init {
     entry {
       var i: int;
+      var j: int;
+      var accountId: int;
       var server: BankServer;
       var accountIds: seq[int];
       var initAccBalance: map[int, int];
     
       // randomly initialize the account balance for all clients
       // creates a random map from accountId's to account balance of size `numAccounts`
+      i = default(int);
       while(i < numAccounts) {
         initAccBalance[i] = choose(100) + 10; // min 10 in the account
         /* Hint 1: Reduce the number of choices by changing the above line to the following:
@@ -19,7 +22,7 @@ machine TestDriver
         */
         i = i + 1;
       }
-      i = default(int);
+
       // create bank server with the init account balance
       server = new BankServer(initAccBalance);
     
@@ -30,8 +33,12 @@ machine TestDriver
       accountIds = keys(initAccBalance);
     
       // create the clients
-      while(i < sizeof(accountIds)) {
-        new Client((serv = server, accountId = accountIds[i], balance = initAccBalance[accountIds[i]]));
+      i = default(int);
+      while(i < numClients) {
+        j = choose(sizeof(accountIds));
+        accountId = accountIds[j];
+        accountIds -= (j);
+        new Client((serv = server, accountId = accountId, balance = initAccBalance[accountId]));
         i = i + 1;
       }
     }
