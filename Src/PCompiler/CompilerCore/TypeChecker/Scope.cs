@@ -706,10 +706,10 @@ namespace Plang.Compiler.TypeChecker
             {
                 if (current.Get(name, out tree))
                 {
-                    if (tree.Role == VariableRole.GlobalParams)
-                    {
-                        throw handler.ModifyGlobalParam(pos, tree); 
-                    }
+                    // if (tree.Role == VariableRole.GlobalParams)
+                    // {
+                    //     throw handler.ModifyGlobalParam(pos, tree); 
+                    // }
                     return true;
                 }
 
